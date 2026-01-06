@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Heart Disease Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 40px;
+        }
+        .container {
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: auto;
+        }
+        input, select, button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+        }
+        button {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #b71c1c;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Prediksi Risiko Penyakit Jantung</h2>
+
+    <input type="number" id="age" placeholder="Umur">
+
+    <select id="sex">
+        <option value="">Jenis Kelamin</option>
+        <option value="1">Laki-laki</option>
+        <option value="0">Perempuan</option>
+    </select>
+
+    <input type="number" id="chest_pain_type" placeholder="Chest Pain Type (0-3)">
+    <input type="number" id="resting_bp" placeholder="Tekanan Darah">
+    <input type="number" id="cholesterol" placeholder="Kolesterol">
+    <input type="number" id="max_heart_rate" placeholder="Denyut Jantung Maks">
+
+    <button onclick="predict()">Prediksi</button>
+
+    <div class="result" id="result"></div>
+    <div class="note">
+        * Hasil ini merupakan prediksi risiko awal, bukan diagnosis medis.
+    </div>
+</div>
+
+<script>
+function predict() {
+    const data = {
+        age: Number(document.getElementById("age").value),
+        sex: Number(document.getElementById("sex").value),
+        chest_pain_type: Number(document.getElementById("chest_pain_type").value),
+        resting_bp: Number(document.getElementById("resting_bp").value),
+        cholesterol: Number(document.getElementById("cholesterol").value),
+        max_heart_rate: Number(document.getElementById("max_heart_rate").value)
+    };
+
+    fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        document.getElementById("result").innerHTML =
+            "Hasil: " + result.result + "<br>Waktu Inferensi: " + result.inference_time + " detik";
+    })
+    .catch(error => {
+        document.getElementById("result").innerHTML = "Terjadi kesalahan";
+        console.error(error);
+    });
+}
+</script>
+
+</body>
+</html>
